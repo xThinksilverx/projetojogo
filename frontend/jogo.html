@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>SENACAIU</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .container-jogo {
+    background: rgba(0,0,0,0.65);
+    border-radius: 16px;
+    padding: 32px 24px;
+    margin: 48px auto;
+    max-width: 600px;
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #areaJogo {
+    width: 500px;
+    height: 400px;
+    background: rgba(255,255,255,0.08);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #ffcc00;
+    border-radius: 12px;
+    margin-top: 24px;
+    margin-bottom: 16px;
+  }
+  .letra {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    cursor: pointer;
+    user-select: none;
+    z-index: 1;
+    top: 0;
+    left: 0;
+  }
+  #menuPause {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 10;
+    border-radius: 12px;
+  }
+  .placar {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #ffcc00;
+    text-shadow: 1px 1px 4px black;
+    font-weight: bold;
+  }
+  .titulo-jogo {
+    font-size: 2.5rem;
+    color: #ffcc00;
+    text-shadow: 2px 2px 8px black;
+    margin-bottom: 8px;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  .botoes-jogo {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  button {
+    background: #ffcc00;
+    color: #222;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: background 0.2s;
+  }
+  button:hover {
+    background: #ffaa00;
+  }
+</style>
+</head>
+<body>
+  <div class="container-jogo">
+    <div class="titulo-jogo">SENACAIU</div>
+    <div class="placar">Pontos: <span id="pontos">0</span></div>
+    <div class="botoes-jogo">
+      <button id="btnPause">Pause</button>
+      <button id="btnVoltar" style="background:#fff;color:#ffcc00;">Menu</button>
+    </div>
+    <div id="areaJogo">
+      <div id="menuPause">
+        <h2>Jogo Pausado</h2>
+        <button id="btnContinuar">Continuar</button>
+        <button id="btnVoltarPause">Voltar ao Menu</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) window.location.href = "index.html";
+
+  const areaJogo = document.getElementById("areaJogo");
+  const pontosSpan = document.getElementById("pontos");
+  const menuPause = document.getElementById("menuPause");
+  const btnPause = document.getElementById("btnPause");
+  const btnContinuar = document.getElementById("btnContinuar");
+  const btnVoltar = document.getElementById("btnVoltar");
+  const btnVoltarPause = document.getElementById("btnVoltarPause");
+
+  const letrasImgs = ["img/S.png","img/E.png","img/N.png","img/A.png","img/C.png"];
+
+  let pontos = 0;
+  let velocidadeQueda = 2;
+  let intervaloCriarLetra = 2000;
+  let jogoPausado = false;
+  const letrasNaTela = [];
+
+  async function salvarPontuacao() {
+    try {
+      const res = await fetch("http://localhost:3000/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: usuario.nome || "Jogador",
+          score: pontos
+        })
+      });
+      if (!res.ok) {
+        console.error("Erro ao salvar pontuação:", await res.json());
+      } else {
+        console.log("Pontuação salva!");
+      }
+    } catch (error) {
+      console.error("Falha ao salvar pontuação:", error);
+    }
+  }
+
+  function criarLetra() {
+    if (jogoPausado) return;
+
+    const letraImg = document.createElement("img");
+    letraImg.classList.add("letra");
+    letraImg.src = letrasImgs[Math.floor(Math.random() * letrasImgs.length)];
+    letraImg.style.left = (Math.random() * (areaJogo.clientWidth - 50)) + "px";
+    letraImg.style.top = "0px";
+    letraImg.style.transform = "translateY(0px)";
+    letraImg.draggable = false;
+
+    const letraObj = { elemento: letraImg, posY: 0, animId: null };
+
+    letraImg.addEventListener("click", () => {
+      if (jogoPausado) return;
+      letraImg.style.pointerEvents = "none";
+      pontos += 100;
+      pontosSpan.innerText = pontos;
+
+      areaJogo.removeChild(letraImg);
+      cancelarAnimacaoLetra(letraObj);
+      removerLetraObj(letraObj);
+
+      if (pontos % 500 === 0 && intervaloCriarLetra > 500) {
+        intervaloCriarLetra -= 200;
+        velocidadeQueda += 0.5;
+        reiniciarIntervaloCriar();
+      }
+
+      if (pontos >= 3000) {
+        salvarPontuacao();
+        alert("Parabéns! Você atingiu o limite de pontos!");
+        window.location.href = "dashboard.html";
+      }
+    });
+
+    areaJogo.appendChild(letraImg);
+    letrasNaTela.push(letraObj);
+    animarLetra(letraObj);
+  }
+
+  function animarLetra(letraObj) {
+    function mover() {
+      if (jogoPausado) {
+        letraObj.animId = requestAnimationFrame(mover);
+        return;
+      }
+      letraObj.posY += velocidadeQueda;
+      letraObj.elemento.style.transform = `translateY(${letraObj.posY}px)`;
+      if (letraObj.posY + 50 >= areaJogo.clientHeight) {
+        gameOver();
+        return;
+      }
+      letraObj.animId = requestAnimationFrame(mover);
+    }
+    letraObj.animId = requestAnimationFrame(mover);
+  }
+
+  function cancelarAnimacaoLetra(letraObj) {
+    if (letraObj.animId) cancelAnimationFrame(letraObj.animId);
+  }
+
+  function removerLetraObj(letraObj) {
+    const index = letrasNaTela.indexOf(letraObj);
+    if (index > -1) letrasNaTela.splice(index, 1);
+  }
+
+  let intervaloCriarID;
+  function iniciarIntervaloCriar() {
+    intervaloCriarID = setInterval(criarLetra, intervaloCriarLetra);
+  }
+  function reiniciarIntervaloCriar() {
+    clearInterval(intervaloCriarID);
+    iniciarIntervaloCriar();
+  }
+  function pararIntervaloCriar() {
+    clearInterval(intervaloCriarID);
+  }
+
+  function gameOver() {
+    alert("Você perdeu!");
+    salvarPontuacao();
+    pararIntervaloCriar();
+    letrasNaTela.forEach(letraObj => {
+      cancelarAnimacaoLetra(letraObj);
+      if (letraObj.elemento.parentNode) {
+        letraObj.elemento.parentNode.removeChild(letraObj.elemento);
+      }
+    });
+    letrasNaTela.length = 0;
+    window.location.href = "dashboard.html";
+  }
+
+  btnPause.addEventListener("click", () => {
+    jogoPausado = true;
+    pararIntervaloCriar();
+    menuPause.style.display = "flex";
+  });
+
+  btnContinuar.addEventListener("click", () => {
+    jogoPausado = false;
+    iniciarIntervaloCriar();
+    menuPause.style.display = "none";
+  });
+
+  btnVoltar.addEventListener("click", () => {
+    salvarPontuacao();
+    window.location.href = "dashboard.html";
+  });
+
+  btnVoltarPause.addEventListener("click", () => {
+    salvarPontuacao();
+    window.location.href = "dashboard.html";
+  });
+
+  iniciarIntervaloCriar();
+</script>
+</body>
+</html>

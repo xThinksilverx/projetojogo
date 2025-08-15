@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>SENACAIU - Tela Inicial</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+      background: url('img/fundo.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+    button { margin: 10px; padding: 10px 20px; font-size: 18px; }
+    #formLogin, #formCadastro { display: none; margin-top: 20px; }
+    input { padding: 8px; margin: 5px; width: 250px; font-size: 16px; }
+  </style>
+</head>
+<body>
+
+  <h1>SENACAIU</h1>
+
+  <button onclick="mostrarLogin()">Login</button>
+  <button onclick="mostrarCadastro()">Cadastro</button>
+
+  <div id="formLogin">
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email" required><br>
+    <input type="password" id="loginSenha" placeholder="Senha" required><br>
+    <button onclick="fazerLogin()">Entrar</button>
+    <p id="msgLogin" style="color:red;"></p>
+  </div>
+
+  <div id="formCadastro">
+    <h2>Cadastro</h2>
+    <input type="text" id="cadNome" placeholder="Nome completo" required><br>
+    <input type="text" id="cadTelefone" placeholder="Telefone" required><br>
+    <input type="email" id="cadEmail" placeholder="Email" required><br>
+    <input type="password" id="cadSenha" placeholder="Senha" required><br>
+    <button onclick="fazerCadastro()">Cadastrar</button>
+    <p id="msgCadastro" style="color:red;"></p>
+  </div>
+
+<script>
+  function mostrarLogin() {
+    document.getElementById('formCadastro').style.display = 'none';
+    document.getElementById('formLogin').style.display = 'block';
+  }
+
+  function mostrarCadastro() {
+    document.getElementById('formLogin').style.display = 'none';
+    document.getElementById('formCadastro').style.display = 'block';
+  }
+
+  async function fazerCadastro() {
+    const nome = document.getElementById('cadNome').value.trim();
+    const telefone = document.getElementById('cadTelefone').value.trim();
+    const email = document.getElementById('cadEmail').value.trim();
+    const senha = document.getElementById('cadSenha').value.trim();
+    const msg = document.getElementById('msgCadastro');
+
+    msg.textContent = '';
+
+    if (!nome || !telefone || !email || !senha) {
+      msg.textContent = 'Preencha todos os campos.';
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:3000/cadastrar', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({nome, telefone, email, senha})
+      });
+      const data = await res.json();
+
+      if(res.ok) {
+        alert('Cadastro realizado com sucesso! Faça login.');
+        mostrarLogin();
+      } else {
+        msg.textContent = data.error || 'Erro ao cadastrar.';
+      }
+    } catch(e) {
+      msg.textContent = 'Erro ao conectar com o servidor.';
+    }
+  }
+
+  async function fazerLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const senha = document.getElementById('loginSenha').value.trim();
+    const msg = document.getElementById('msgLogin');
+
+    msg.textContent = '';
+
+    if (!email || !senha) {
+      msg.textContent = 'Preencha todos os campos.';
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, senha})
+      });
+      const data = await res.json();
+
+      if(res.ok) {
+        // salva no localStorage pra usar no jogo/dashboard
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        window.location.href = 'dashboard.html';
+      } else {
+        msg.textContent = data.error || 'Login inválido.';
+      }
+    } catch(e) {
+      msg.textContent = 'Erro ao conectar com o servidor.';
+    }
+  }
+</script>
+
+</body>
+</html>
