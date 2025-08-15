@@ -6,31 +6,38 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="index">
+  <div class="container">
+    <h1>SENACAIU</h1>
+    <div style="margin-bottom: 24px;">
+      <button onclick="mostrarLogin()">Login</button>
+      <button onclick="mostrarCadastro()">Cadastro</button>
+    </div>
 
-  <h1>SENACAIU</h1>
+    <div id="formLogin">
+      <h2>Login</h2>
+      <input type="email" id="loginEmail" placeholder="Email" required><br>
+      <input type="password" id="loginSenha" placeholder="Senha" required><br>
+      <button onclick="fazerLogin()">Entrar</button>
+      <p id="msgLogin" style="color:red;"></p>
+    </div>
 
-  <button onclick="mostrarLogin()">Login</button>
-  <button onclick="mostrarCadastro()">Cadastro</button>
-
-  <div id="formLogin">
-    <h2>Login</h2>
-    <input type="email" id="loginEmail" placeholder="Email" required><br>
-    <input type="password" id="loginSenha" placeholder="Senha" required><br>
-    <button onclick="fazerLogin()">Entrar</button>
-    <p id="msgLogin" style="color:red;"></p>
-  </div>
-
-  <div id="formCadastro">
-    <h2>Cadastro</h2>
-    <input type="text" id="cadNome" placeholder="Nome completo" required><br>
-    <input type="text" id="cadTelefone" placeholder="Telefone" required><br>
-    <input type="email" id="cadEmail" placeholder="Email" required><br>
-    <input type="password" id="cadSenha" placeholder="Senha" required><br>
-    <button onclick="fazerCadastro()">Cadastrar</button>
-    <p id="msgCadastro" style="color:red;"></p>
+    <div id="formCadastro">
+      <h2>Cadastro</h2>
+      <input type="text" id="cadNome" placeholder="Nome completo" required><br>
+      <input type="text" id="cadTelefone" placeholder="Telefone" required><br>
+      <input type="email" id="cadEmail" placeholder="Email" required><br>
+      <input type="password" id="cadSenha" placeholder="Senha" required><br>
+      <button onclick="fazerCadastro()">Cadastrar</button>
+      <p id="msgCadastro" style="color:red;"></p>
+    </div>
   </div>
 
 <script>
+  // Exibe o formulário de login por padrão
+  window.onload = function() {
+    mostrarLogin();
+  };
+
   function mostrarLogin() {
     document.getElementById('formCadastro').style.display = 'none';
     document.getElementById('formLogin').style.display = 'block';
@@ -105,6 +112,5 @@
     }
   }
 </script>
-
 </body>
 </html>
