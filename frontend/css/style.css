@@ -1,70 +1,132 @@
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #1e1e1e, #2c2c2c);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
 
-.container {
+.container,
+.container-jogo {
+    background: rgba(0,0,0,0.65);
+    border-radius: 16px;
+    padding: 32px 24px;
+    margin: 48px auto;
+    max-width: 600px;
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     text-align: center;
-    max-width: 900px;
-    width: 100%;
 }
 
-.title {
-    font-size: 3rem;
-    margin-bottom: 20px;
+.titulo-jogo {
+    font-size: 2.5rem;
     color: #ffcc00;
     text-shadow: 2px 2px 8px black;
+    margin-bottom: 8px;
+    font-weight: bold;
+    letter-spacing: 2px;
 }
 
-.forms {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.card {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    width: 280px;
-}
-
-.card h2 {
+.placar {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
     color: #ffcc00;
-    margin-bottom: 15px;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 12px;
-    border: none;
-    border-radius: 6px;
-    outline: none;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background: #ffcc00;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    text-shadow: 1px 1px 4px black;
     font-weight: bold;
 }
 
-button:hover {
-    background: #ffaa00;
+.botoes-jogo {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+    justify-content: center;
 }
+
+#areaJogo {
+    width: 500px;
+    height: 400px;
+    background: rgba(255,255,255,0.08);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #ffcc00;
+    border-radius: 12px;
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+.letra {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    cursor: pointer;
+    user-select: none;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+
+#menuPause {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 10;
+    border-radius: 12px;
+}
+
+table {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+th {
+    background: #ffcc00;
+    color: #222;
+}
+a {
+    color: #ffcc00;
+    font-weight: bold;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+#username {
+    color: #ffcc00;
+    font-weight: bold;
+}
+
 body {
+    font-family: Arial, sans-serif;Q
+    text-align: center;
     background: url('../img/fundo.png') no-repeat center center fixed;
     background-size: cover;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+}
+#formLogin, #formCadastro {
+    display: none;
+    margin-top: 20px;
+}
+input {
+    padding: 8px;
+    margin: 5px;
+    width: 250px;
+    font-size: 16px;
+}
+.container-jogo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    margin: 48px auto;
 }

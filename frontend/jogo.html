@@ -4,89 +4,7 @@
 <meta charset="UTF-8" />
 <title>SENACAIU</title>
 <link rel="stylesheet" href="css/style.css">
-<style>
-  .container-jogo {
-    background: rgba(0,0,0,0.65);
-    border-radius: 16px;
-    padding: 32px 24px;
-    margin: 48px auto;
-    max-width: 600px;
-    color: #fff;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  #areaJogo {
-    width: 500px;
-    height: 400px;
-    background: rgba(255,255,255,0.08);
-    position: relative;
-    overflow: hidden;
-    border: 2px solid #ffcc00;
-    border-radius: 12px;
-    margin-top: 24px;
-    margin-bottom: 16px;
-  }
-  .letra {
-    width: 50px;
-    height: 50px;
-    position: absolute;
-    cursor: pointer;
-    user-select: none;
-    z-index: 1;
-    top: 0;
-    left: 0;
-  }
-  #menuPause {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 10;
-    border-radius: 12px;
-  }
-  .placar {
-    font-size: 1.2rem;
-    margin-bottom: 8px;
-    color: #ffcc00;
-    text-shadow: 1px 1px 4px black;
-    font-weight: bold;
-  }
-  .titulo-jogo {
-    font-size: 2.5rem;
-    color: #ffcc00;
-    text-shadow: 2px 2px 8px black;
-    margin-bottom: 8px;
-    font-weight: bold;
-    letter-spacing: 2px;
-  }
-  .botoes-jogo {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-  button {
-    background: #ffcc00;
-    color: #222;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: background 0.2s;
-  }
-  button:hover {
-    background: #ffaa00;
-  }
-</style>
+
 </head>
 <body>
   <div class="container-jogo">
@@ -120,7 +38,7 @@
   const letrasImgs = ["img/S.png","img/E.png","img/N.png","img/A.png","img/C.png"];
 
   let pontos = 0;
-  let velocidadeQueda = 2;
+  let velocidadeQueda = 3;
   let intervaloCriarLetra = 2000;
   let jogoPausado = false;
   const letrasNaTela = [];
@@ -168,13 +86,13 @@
       cancelarAnimacaoLetra(letraObj);
       removerLetraObj(letraObj);
 
-      if (pontos % 500 === 0 && intervaloCriarLetra > 500) {
-        intervaloCriarLetra -= 200;
-        velocidadeQueda += 0.5;
+      if (pontos % 300 === 0 && intervaloCriarLetra > 300) {
+        intervaloCriarLetra -= 300;
+        velocidadeQueda += 0.8;
         reiniciarIntervaloCriar();
       }
 
-      if (pontos >= 3000) {
+      if (pontos >= 5000) {
         salvarPontuacao();
         alert("Parabéns! Você atingiu o limite de pontos!");
         window.location.href = "dashboard.html";

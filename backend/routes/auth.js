@@ -34,7 +34,6 @@ router.post('/cadastrar', (req, res) => {
   );
 });
 
-// Login
 router.post('/login', (req, res) => {
   const { email, senha } = req.body;
   if (!email || !senha) {

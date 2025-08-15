@@ -3,20 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>SENACAIU - Tela Inicial</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 100px;
-      background: url('img/fundo.png') no-repeat center center fixed;
-      background-size: cover;
-    }
-    button { margin: 10px; padding: 10px 20px; font-size: 18px; }
-    #formLogin, #formCadastro { display: none; margin-top: 20px; }
-    input { padding: 8px; margin: 5px; width: 250px; font-size: 16px; }
-  </style>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="index">
 
   <h1>SENACAIU</h1>
 
@@ -106,7 +95,6 @@
       const data = await res.json();
 
       if(res.ok) {
-        // salva no localStorage pra usar no jogo/dashboard
         localStorage.setItem('usuario', JSON.stringify(data.usuario));
         window.location.href = 'dashboard.html';
       } else {

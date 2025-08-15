@@ -14,13 +14,12 @@ db.connect(err => {
   console.log('Conectado ao MySQL (pontuacao)');
 });
 
-// Salvar pontuação
 router.post('/score', (req, res) => {
   const { username, score } = req.body;
   if (!username || typeof score !== 'number') {
     return res.status(400).json({ error: 'Dados inválidos' });
   }
-  // Busca o usuário pelo nome
+
   db.query('SELECT id FROM usuarios WHERE nome = ?', [username], (err, results) => {
     if (err) return res.status(500).json({ error: 'Erro ao buscar usuário' });
     if (results.length === 0) return res.status(404).json({ error: 'Usuário não encontrado' });
@@ -32,7 +31,6 @@ router.post('/score', (req, res) => {
   });
 });
 
-// Listar ranking
 router.get('/pontuacoes', (req, res) => {
   const sql = `
     SELECT u.nome, p.pontos, p.data_registro

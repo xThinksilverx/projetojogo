@@ -6,7 +6,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Importa rotas
 const authRoutes = require('./routes/auth');
 const scoreRoutes = require('./routes/pontuacao');
 
