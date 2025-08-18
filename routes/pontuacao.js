@@ -1,48 +1,40 @@
 const express = require('express');
-const mysql = require('mysql2');
 const router = express.Router();
+const db = require('../db');
 
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'senac_game'
-});
-
-db.connect(err => {
-  if (err) throw err;
-  console.log('Conectado ao MySQL (pontuacao)');
-});
-
-router.post('/score', (req, res) => {
+// Salvar pontuação
+router.post('/score', async (req, res) => {
   const { username, score } = req.body;
   if (!username || typeof score !== 'number') {
-    return res.status(400).json({ error: 'Dados inválidos' });
+    return res.status(400).json({ error: 'Dados inválidos.' });
   }
-
-  db.query('SELECT id FROM usuarios WHERE nome = ?', [username], (err, results) => {
-    if (err) return res.status(500).json({ error: 'Erro ao buscar usuário' });
-    if (results.length === 0) return res.status(404).json({ error: 'Usuário não encontrado' });
-    const usuario_id = results[0].id;
-    db.query('INSERT INTO pontuacoes (usuario_id, pontos) VALUES (?, ?)', [usuario_id, score], (err2) => {
-      if (err2) return res.status(500).json({ error: 'Erro ao salvar pontuação' });
-      res.json({ success: true });
+  try {
+    await db.collection('pontuacoes').add({
+      nome: username,
+      pontos: score,
+      data_registro: new Date().toISOString()
     });
-  });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao salvar pontuação.' });
+  }
 });
 
-router.get('/pontuacoes', (req, res) => {
-  const sql = `
-    SELECT u.nome, p.pontos, p.data_registro
-    FROM pontuacoes p
-    JOIN usuarios u ON p.usuario_id = u.id
-    ORDER BY p.pontos DESC, p.data_registro ASC
-    LIMIT 10
-  `;
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: 'Erro ao buscar pontuações' });
-    res.json(results);
-  });
+// Buscar ranking
+router.get('/pontuacoes', async (req, res) => {
+  try {
+    const snapshot = await db.collection('pontuacoes')
+      .orderBy('pontos', 'desc')
+      .limit(20)
+      .get();
+    const ranking = [];
+    snapshot.forEach(doc => {
+      ranking.push(doc.data());
+    });
+    res.json(ranking);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao buscar ranking.' });
+  }
 });
 
 module.exports = router;

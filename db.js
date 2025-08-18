@@ -1,18 +1,12 @@
-const mysql = require('mysql2');
+const admin = require('firebase-admin');
+const serviceAccount = require('./serviceAccountKey.json'); // coloque o arquivo na raiz do projeto
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root', 
-    password: '',       
-    database: 'senac_game'
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+}
 
-connection.connect(err => {
-    if (err) {
-        console.error('Erro ao conectar ao MySQL:', err);
-        return;
-    }
-    console.log('Conectado ao MySQL!');
-});
+const db = admin.firestore();
 
-module.exports = connection;
+module.exports = db;
